@@ -15,7 +15,16 @@ class MazeCell {
 	}
 	
 	projection(){
-		return '['+this.row+','+this.col+']'
+		var projection = '';
+		if (this.type===MazeCellTypes.WALL){
+			projection = "WALL cell at "
+		}
+		// a cell doesn't stop being a passageway when it becomes part of a solution.
+		else if (this.type===MazeCellTypes.PASSAGEWAY || this.type===MazeCellTypes.SOLUTION){
+			projection = "PASSAGEWAY cell at "
+		}
+		projection += '['+this.row+','+this.col+']';
+		return projection;
 	}
 }
 
@@ -42,7 +51,6 @@ class Maze {
 
 		this.start = this.maze[1][0];
 		this.destination = this.maze[this.maze.length-2][this.maze[0].length-1];
-		this.destination.type = MazeCellTypes.PASSAGEWAY;
 	}
 
 	/*
@@ -62,22 +70,21 @@ class Maze {
 	getNeighbors(cell) {
 		var neighbors = [];
 
-		// can you move up?
 		if (cell.row - 1 >= 0 &&
 			this.maze[cell.row - 1][cell.col].type === MazeCellTypes.PASSAGEWAY) {
 			neighbors.push(this.maze[cell.row - 1][cell.col]);
 		}
-		// can you move left?
+
 		if (cell.col - 1 >= 0 &&
 			this.maze[cell.row][cell.col - 1].type === MazeCellTypes.PASSAGEWAY) {
 			neighbors.push(this.maze[cell.row][cell.col - 1]);
 		}
-		// can you move down?
+
 		if (cell.row + 1 < this.maze.length &&
 			this.maze[cell.row + 1][cell.col].type === MazeCellTypes.PASSAGEWAY) {
 			neighbors.push(this.maze[cell.row + 1][cell.col])
 		}
-		// can you move right?
+
 		if (cell.col + 1 < this.maze[cell.row].length &&
 			this.maze[cell.row][cell.col + 1].type === MazeCellTypes.PASSAGEWAY) {
 			neighbors.push(this.maze[cell.row][cell.col + 1]);
@@ -95,27 +102,27 @@ class Maze {
 	 * that it needed to visit to find the path.
 	 */
 	solveMazeBFS() {
-		var firstElement = this.start;
 		// create the queue to hold the cells we have visited but need
 		// to return to explore (we will treat the array like a queue)
 		var queue = new Array()
-		queue.push(firstElement);
+		queue.push(this.start);
 
 		// create a set to hold the cells we have visited and add the 
 		// first element
 		var visited = new Set();
-		visited.add(firstElement.projection())
+		visited.add(this.start.projection())
 		
 		// create a map to hold cells to parents, set first element's
 		// parents as false (is source cell). Generally, the parents
 		// map will have projection values as keys and objects as values.
 		var parents = new Array();
-		parents[firstElement.projection()] = false;
+		parents[this.start.projection()] = false;
 		
-		// iterationCounter prevents infinite loops
+		// iterationCounter prevents infinite loops from crashing your browser
+		// while actively developing
 		var iterationCounter = 0;
 		
-		// enter your code here
+		// search and continue searching  while there are still items in the queue
 		while (iterationCounter<Math.pow(this.maze.length,4) && queue.length >= 1) {
 			iterationCounter++;
 			
@@ -124,7 +131,7 @@ class Maze {
 
 			// test to see if it meets the destination criteria
 			if (this.destinationPredicate(current)) {
-				// we've found the path! Awesome!
+				// we've reached the destination! Awesome!
 				break;
 			}
 

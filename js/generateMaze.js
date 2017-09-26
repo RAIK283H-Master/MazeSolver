@@ -76,9 +76,9 @@ function generateMaze(mazeHeightWidth) {
 		}
 	}
 	
-	// the entry (start) point is the first element of the second row
+	// the entry (start) point is ALWAYS the first element of the second row
 	maze[1][0] = MazeCellTypes.PASSAGEWAY;
-	// the exit (destination) point is the last element of the second to last row
+	// the exit (destination) point is ALWAYS the last element of the second to last row
 	maze[maze.length-2][maze[0].length-1] = MazeCellTypes.PASSAGEWAY;
 	
 	// turn maze into plain text one row at a time, then join with newlines
