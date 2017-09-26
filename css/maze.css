@@ -1,0 +1,21 @@
+@charset "UTF-8";
+/* CSS Document */
+
+table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 610px;
+  font-size: 6px;
+}
+.maze td{
+  text-align: center;
+}
+.wall{
+  background: #333;
+}
+.path{
+  background: #D00000;
+}
+.visited{
+  background: #eee;
+}
