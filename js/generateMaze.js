@@ -29,7 +29,7 @@ function generateMaze(mazeHeightWidth) {
 	var posX = 1;
 	var posY = 1;
 	maze[posX][posY] = ' ';
-	moves.push(posY + posY * mazeHeightWidth);
+	moves.push(posY + posX * mazeHeightWidth);
 	while (moves.length) {
 		var possibleDirections = "";
 		if (posX + 2 > 0 && posX + 2 < mazeHeightWidth - 1 && maze[posX + 2][posY] == MazeCellTypes.WALL) {
