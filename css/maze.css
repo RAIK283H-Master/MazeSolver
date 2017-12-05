@@ -17,5 +17,14 @@ table {
   background: #D00000;
 }
 .visited{
-  background: #eee;
+  background: #ccc;
+}
+
+.frontier{
+  background: #aaa;
+}
+
+hr{
+  margin-bottom: 25px;
+  margin-top: 25px;
 }

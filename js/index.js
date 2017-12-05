@@ -1,7 +1,9 @@
+var displayFrontier = true;
+
 /*
  * this function displays the maze to the screen
  */
-function showMaze(m,title) {
+function getMazeTable(m) {
 	// get the table with id="maze" so we can add elements to it
 	var $mazeTable = $('<table class="maze"></table>');
 	// set the width proportional to the size of the maze
@@ -13,16 +15,35 @@ function showMaze(m,title) {
 		for (var j = 0; j < m.maze[i].length; j++) {
 			// create the cell
 			var $cell = $('<td>&nbsp;</td>')
-				// colorize the cells
+			// colorize the cells
 			if (m.maze[i][j].type === MazeCellTypes.WALL) $cell.addClass('wall');
 			else if (m.maze[i][j].type === MazeCellTypes.SOLUTION) $cell.addClass('path');
+			else if (displayFrontier && m.maze[i][j].type === MazeCellTypes.VISITED) $cell.addClass('visited');
+			else if (displayFrontier && m.maze[i][j].type === MazeCellTypes.FRONTIER) $cell.addClass('frontier');
 			else $cell.addClass('passageway')
 			$mazeRow.append($cell);
 		}
 		$mazeTable.append($mazeRow);
 	}
-	var $mazeDiv = $('#mazeDiv');
-	$mazeDiv.append($mazeTable);
+	return $mazeTable;
+}
+
+function showResults(m, title){
+	var $outputDiv = $('<div class="outputDiv"></div>');
+	counts = m.cellCounts()
+	numCellsInSolution = counts['solution'];
+	numCellsInFrontier = counts['frontier'];
+	numCellsVisited = counts['visited'];
+	// log some data
+	$outputDiv.append('<p>');
+	$outputDiv.append('<b>'+title+'</b><br/>');
+	$outputDiv.append('Number of cells in solution: '+numCellsInSolution+'<br/>');
+	$outputDiv.append('Number of cells visited: '+numCellsVisited+'<br/>');
+	$outputDiv.append('Number of cells in frotier: '+numCellsInFrontier+'<br/>');
+	$outputDiv.append('</p>');
+	$outputDiv.append(getMazeTable(m))
+	$outputDiv.append('<hr>');	
+	$('#resultsDiv').append($outputDiv);
 }
 
 /*
@@ -41,33 +62,32 @@ $(document).ready(function () {
 	// SET UP AND PERFORM BREADTH FIRST SEARCH
 	// initialize the maze object
 	var mBFS = new Maze(plainTextMaze);
-	// solve the maze and store the number of nodes visited
-	var numCellsVisitedBFS = mBFS.solveMazeBFS();
-	// get the length of the solution:
-	var numCellsInSolutionBFS = mBFS.cellsInSolution()
-	// log some data
-	$outputDiv.append('<p>');
-	$outputDiv.append('<b>BREADTH FIRST SEARCH</b><br/>');
-	$outputDiv.append('Number of cells visited: '+numCellsVisitedBFS+'<br/>');
-	$outputDiv.append('Number of cells in solution: '+numCellsInSolutionBFS+'<br/>');
-	$outputDiv.append('</p>');
-	// display the maze
-	showMaze(mBFS);
-	
+	// solve the maze
+	mBFS.solveMazeBFS();
+	// show BFS results
+	showResults(mBFS,"BREADTH-FIRST SEARCH");
 	
 	// SET UP AND PERFORM DEPTH FIRST SEARCH
 	// initialize the maze object
-	mDFS = new Maze(plainTextMaze);
-	// solve the maze and store the number of nodes visited
-	numCellsVisitedDFS = mDFS.solveMazeDFS();
-	// get the length of the solution:
-	numCellsInSolutionDFS = mDFS.cellsInSolution()
-	// log some data
-	$outputDiv.append('<p>');
-	$outputDiv.append('<b>DEPTH FIRST SEARCH</b><br/>');
-	$outputDiv.append('Number of cells visited: '+numCellsVisitedDFS+'<br/>');
-	$outputDiv.append('Number of cells in solution: '+numCellsInSolutionDFS+'<br/>');
-	$outputDiv.append('</p>');
-	// the solution to the maze will be the same (by the definition of "perfect maze") so we
-	// don't need to display the maze again.
+	var mDFS = new Maze(plainTextMaze);
+	// solve the maze 
+	mDFS.solveMazeDFS();
+	// show BFS results
+	showResults(mDFS,"DEPTH-FIRST SEARCH");
+	
+	// SET UP AND PERFORM DIJKSTRA'S ALGORITHM
+	// initialize the maze object
+	var mDFS = new Maze(plainTextMaze);
+	// solve the maze 
+	mDFS.solveMazeDijkstra();
+	// show BFS results
+	showResults(mDFS,"DIJKSTRA'S ALGORITHM");
+	
+	// SET UP AND PERFORM A*
+	// initialize the maze object
+	var mDFS = new Maze(plainTextMaze);
+	// solve the maze 
+	mDFS.solveMazeAStar();
+	// show BFS results
+	showResults(mDFS,"A*");
 });
